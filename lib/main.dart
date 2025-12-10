@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/recipe.dart';
+import 'package:flutter_application_1/recipe_detail.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const RecipeApp());
@@ -14,7 +16,10 @@ class RecipeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Recipe Calculator',
       theme: ThemeData(
+        textTheme: GoogleFonts.pacificoTextTheme(),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 240, 169, 169),
         appBarTheme: const AppBarTheme(
+          backgroundColor: Color.fromARGB(255, 240, 120, 120),
           centerTitle: true,
         ),
       ),
@@ -33,30 +38,51 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: SafeArea(
-          child: ListView.builder(
-            itemBuilder: (BuildContext context, int index) {
-              return buildRecipeCard(Recipe.samples[index]);
-            },
-            itemCount: Recipe.samples.length,
-          ),
+        child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                // Handle tap event if needed
+                print('You taped on${Recipe.samples[index].imglabel}');
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return RecipeDetail(recipe: Recipe.samples[index]);
+                }));
+              },
+              child: buildRecipeCard(Recipe.samples[index]),
+            );
+          },
+          itemCount: Recipe.samples.length,
         ),
-      );
+      ),
+    );
   }
 }
 
 Widget buildRecipeCard(Recipe recipe) {
   return Card(
-    child: Column(
-      children: <Widget>[
-        Image(image: AssetImage(recipe.imgurl)),
-        Text(recipe.imglabel),
-      ],
+    elevation: 2.0,
+    color: Colors.white,
+    shape: BeveledRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: <Widget>[
+          Text(
+            recipe.imglabel,
+            style: GoogleFonts.pacifico(fontSize: 24.0, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 8.0),
+          Image(image: AssetImage(recipe.imgurl)),
+        ],
+      ),
     ),
   );
 }
