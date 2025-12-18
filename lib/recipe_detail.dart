@@ -1,62 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/recipe.dart';
 
-class RecipeDetail extends StatelessWidget {
+class RecipeDetail extends StatefulWidget {
   final Recipe recipe;
 
   const RecipeDetail({super.key, required this.recipe});
 
   @override
+  State<RecipeDetail> createState() => _RecipeDetailState();
+}
+
+class _RecipeDetailState extends State<RecipeDetail> {
+  int sliderValue = 1;
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Recipe Detail'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: AppBar(title: const Text('Recipe Detail')),
+      body: ListView(
+        padding: const EdgeInsets.all(8),
         children: [
-          const SizedBox(height: 8.0),
+          // -------------------------
+          // IMAGE CARD
+          // -------------------------
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Image.asset(widget.recipe.imgurl),
+            ),
+          ),
 
-          Image(image: AssetImage(recipe.imgurl)),
-
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 12),
 
           // -------------------------
-          //      CARD START
+          // DETAIL + INGREDIENT + SLIDER (ONE CARD)
           // -------------------------
-          Padding(
-            padding: const EdgeInsets.all(12.0),   // ขยับ card ให้ไม่ติดขอบจอ
-            child: Card(
-              elevation: 4,                        // เงาเล็ก ๆ ให้ดูนูน
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16), // ขอบโค้ง
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),      // padding ใน card
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title
-                    Text(
-                      '${recipe.imglabel} Details',
-                      style: const TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                      ),
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${widget.recipe.imglabel} Details',
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
                     ),
+                  ),
+                  const SizedBox(height: 12),
 
-                    const SizedBox(height: 12),
+                  Text(
+                    widget.recipe.detail,
+                    style: const TextStyle(fontSize: 20),
+                  ),
 
-                    Text(
-                      recipe.detail,
-                      style: const TextStyle(
-                        fontSize: 14.0,
-                      ),
-                      textAlign: TextAlign.left,
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    'Ingredients',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Ingredients list (ไม่ใช้ Expanded)
+                  ...widget.recipe.ingredients.map((ingredient) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text(
+                        '${ingredient.quantity * sliderValue} '
+                        '${ingredient.unit} '
+                        '${ingredient.name}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(height: 12),
+
+                  Slider(
+                    min: 1,
+                    max: 10,
+                    divisions: 9,
+                    label: '$sliderValue servings',
+                    value: sliderValue.toDouble(),
+                    onChanged: (value) {
+                      setState(() {
+                        sliderValue = value.toInt();
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
           ),
